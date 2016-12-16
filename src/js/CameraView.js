@@ -5,7 +5,9 @@ import {
     StyleSheet,
     Text,
     View,
-    Dimensions
+    Dimensions,
+    PanResponder,
+    Animated
 } from 'react-native';
 
 import Camera from 'react-native-camera';
@@ -35,6 +37,7 @@ export default class CameraView extends Component {
         super(props);
 
         this.camera = null;
+        this.panResponder = null;
     }
 
     setCamera(ref) {
@@ -59,13 +62,15 @@ export default class CameraView extends Component {
                     style={styles.preview}
                     ref={ref => this.setCamera(ref)}
                 >
-                    <ImageOverlay />
                     <Text
                         onPress={() => this.capture()}
                         style={styles.takePicture}
                     >
                         Take a picture!
                     </Text>
+                    <ImageOverlay
+                        pan={this.panResponder}
+                    />
                 </Camera>
             </View>
         );

@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
@@ -24,15 +24,17 @@ class Router extends Component {
 
     render() {
         const { activeItem, items } = this.props;
-        return activeItem ? <ItemViewer item={activeItem} exit={this.goToMainMenu} /> : <MainMenu items={items} viewItem={this.viewItem} />;
+        return activeItem
+             ? <ItemViewer item={activeItem} exit={this.goToMainMenu} />
+             : <MainMenu items={items} viewItem={this.viewItem} />;
     }
 }
 
 function mapStateToProps(state) {
     return {
         items: state.items,
-        activeItem: state.activeItem
-    }
+        activeItem: true //state.activeItem
+    };
 }
 
 function mapDispatchToProps(dispatch) {
