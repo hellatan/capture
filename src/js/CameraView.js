@@ -56,14 +56,19 @@ export default class CameraView extends Component {
     }
 
     componentWillMount() {
+        this._animatedValueX = 0;
+        this._animatedValueY = 0;
+        this.state.pan.x.addListener((value) => this._animatedValueX = value.value);
+        this.state.pan.y.addListener((value) => this._animatedValueY = value.value);
+
         this._pan = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
             onMoveShouldSetPanResponderCapture: () => true,
 
             onPanResponderGrant: (e, gestureState) => {
                 // Set the initial value to the current state
-                /* this.state.pan.setOffset({x: this.state.pan.x._value, y: this.state.pan.y._value});*/
-                this.state.pan.setValue({x: 0, y: 0});
+                this.state.pan.setOffset({x: this._animatedValueX, y: this._animatedValueY});
+                this.state.pan.setValue({x: 0, y: 0}); //Initial value
 
                 Animated.spring(
                     this.state.scale,
@@ -81,10 +86,16 @@ export default class CameraView extends Component {
                 }
             ]),
 
-            onPanResponderRelease: (e, gesture) => {
+            onPanResponderRelease: () => {
+                this.state.pan.flattenOffset(); // Flatten the offset so it resets the default positioning
                 this.setState({ dragging: false });
             }
         });
+    }
+
+    componentWillUnmount() {
+        this.state.pan.x.removeAllListeners();
+        this.state.pan.y.removeAllListeners();
     }
 
     setCamera(ref) {
