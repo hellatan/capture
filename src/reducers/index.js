@@ -25,9 +25,10 @@ const defaultItems = [
 
 function activeItemReducer(state = null, { type, payload }) {
     switch (type) {
-        case SET_ACTIVE_ITEM:
-            return { ...payload };
-            break;
+        case SET_ACTIVE_ITEM: {
+            const item = payload ? {...payload} : null;
+            return item;
+        }
         default:
             return state;
     }

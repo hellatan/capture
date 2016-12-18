@@ -20,7 +20,7 @@ class Router extends Component {
     render() {
         const { activeItem, items } = this.props;
         return activeItem
-             ? <ItemViewer item={activeItem} exit={this.goToMainMenu} />
+             ? <ItemViewer item={activeItem} exit={this.goToMainMenu} backToMenu={() => this.props.setActiveItem(null)} />
              : <MainMenu items={items} viewItem={this.props.setActiveItem} />;
     }
 }
