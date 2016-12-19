@@ -1,0 +1,175 @@
+// @flow
+
+import React, {Component} from 'react';
+import {
+    StyleSheet,
+    Text,
+    Image,
+    View,
+    PanResponder,
+    Animated
+} from 'react-native';
+
+// maybe want to make this more dynamic later?
+const INITIAL_SIZE = 200;
+
+// this is hacky because i don't know how to do border-box in react native
+const BORDER_WIDTH = 2;
+
+const styles = StyleSheet.create({
+    drag: {
+        flex: 0,
+        width: INITIAL_SIZE,
+        height: INITIAL_SIZE
+    },
+    dragging: {
+        opacity: 0.7
+    },
+    scaling: {
+        borderWidth: BORDER_WIDTH,
+        borderColor: '#0f0'
+    },
+    image: {
+        width: INITIAL_SIZE,
+        height: INITIAL_SIZE
+    },
+    text: {
+        flex: 1,
+        flexBasis: INITIAL_SIZE - (2 * BORDER_WIDTH),
+        textAlign: 'center',
+        backgroundColor: '#ff0'
+    }
+});
+
+export default class ImageOverlay extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            dragging: false,
+            pan: new Animated.ValueXY(),
+            scale: new Animated.Value(1),
+            initialPinch: null
+        };
+    }
+
+    componentWillMount() {
+        // store the last values so we can reset the offsets after the user releases the drag
+        this._animatedValueX = 0;
+        this._animatedValueY = 0;
+        this._scale = 1;
+
+        this.state.pan.x.addListener((value) => this._animatedValueX = value.value);
+        this.state.pan.y.addListener((value) => this._animatedValueY = value.value);
+
+        this._pan = PanResponder.create({
+            onMoveShouldSetResponderCapture: () => true,
+            onMoveShouldSetPanResponderCapture: () => true,
+
+            onPanResponderGrant: (e, gestureState) => {
+                // reset the offset to the previously stored values
+                this.state.pan.setOffset({x: this._animatedValueX, y: this._animatedValueY});
+                this.state.pan.setValue({x: 0, y: 0});
+            },
+
+            onPanResponderMove: (e, gesture) => this._handleMove(e, gesture),
+
+            onPanResponderRelease: () => {
+                this.state.pan.flattenOffset(); // Flatten the offset so it resets the default positioning
+                this.setState({
+                    dragging: false,
+                    scaling: false,
+                    initialPinch: null
+                });
+            }
+        });
+    }
+
+    componentWillUnmount() {
+        this.state.pan.x.removeAllListeners();
+        this.state.pan.y.removeAllListeners();
+    }
+
+    _handleMove(e, gesture) {
+        const touches = e.nativeEvent.touches;
+        const {dx, dy} = gesture;
+
+        if (touches.length === 1) {
+            this.setState({ dragging: true });
+            return this._handleDrag(dx, dy);
+
+        } else if (touches.length === 2) {
+            const [touch1, touch2] = touches;
+
+            return this._handlePinchZoom(touch1.pageX, touch1.pageY, touch2.pageX, touch2.pageY);
+        }
+    }
+
+    _handleDrag(x, y) {
+        this.state.pan.x.setValue(x);
+        this.state.pan.y.setValue(y);
+    }
+
+    _handleRotate() {
+        // TODO
+    }
+
+    _handlePinchZoom(x1, y1, x2, y2) {
+        const {initialPinch} = this.state;
+
+        const dx = Math.abs(x1 - x2);
+        const dy = Math.abs(y1 - y2);
+        const distance = Math.sqrt((dx * dx) + (dy * dy));
+
+        const initialDistance = initialPinch ? initialPinch.distance : distance;
+        const distanceDiff = distance - initialDistance;
+        const scale = (INITIAL_SIZE + distanceDiff) / INITIAL_SIZE;
+
+        if (!initialPinch) {
+            this.setState({
+                scaling: true,
+                initialPinch: { x1, y1, x2, y2, distance }
+            });
+
+            this._scale = this.state.scale._value;
+        }
+
+        const clamp = (val, min, max) => Math.max(min, Math.min(val, max));
+
+        Animated.spring(
+            this.state.scale,
+            { toValue: clamp(scale * this._scale, 0.6, 4), friction: 4 }
+        ).start();
+    }
+
+    render() {
+        const {image} = this.props;
+        const pan = this._pan;
+        const scale = this.state.scale;
+        const {x, y} = this.state.pan;
+
+        const imageStyle = {
+            transform: [
+                { translateX: x },
+                { translateY: y },
+                { scale }
+            ]
+        };
+        const dragStyle = this.state.dragging ? styles.dragging : null;
+        const scaleStyle = this.state.scaling ? styles.scaling : null;
+
+        return (
+            <View style={styles.drag}>
+                <Animated.View
+                    style={[imageStyle, dragStyle, scaleStyle]}
+                    {...pan.panHandlers}
+                >
+                    <Image
+                        source={image}
+                        style={styles.image}
+                    />
+                </Animated.View>
+            </View>
+        );
+    }
+}

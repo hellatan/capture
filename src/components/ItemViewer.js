@@ -4,7 +4,7 @@ import {
   View
 } from 'react-native';
 
-import CameraView from '../js/CameraView';
+import CameraView from './camera/CameraView';
 
 const styles = StyleSheet.create({
     container: {
@@ -13,10 +13,13 @@ const styles = StyleSheet.create({
     }
 });
 
-export default function ItemView({ item, exit }) {
+export default function ItemView({ item, exit, backToMenu }) {
     return (
         <View style={styles.container}>
-            <CameraView />
+            <CameraView
+                item={item}
+                backToMenu={backToMenu}
+            />
         </View>
     );
 }
