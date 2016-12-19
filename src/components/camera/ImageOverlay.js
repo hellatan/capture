@@ -79,6 +79,8 @@ export default class ImageOverlay extends Component {
                 // reset the offset to the previously stored values
                 this.state.pan.setOffset({x: this._animatedValueX, y: this._animatedValueY});
                 this.state.pan.setValue({x: 0, y: 0});
+
+                this._markTouched();
             },
 
             onPanResponderMove: (e, gesture) => this._handleMove(e, gesture),
@@ -123,8 +125,6 @@ export default class ImageOverlay extends Component {
             this._handleRotate(x1, y1, x2, y2);
             this._handlePinchZoom(x1, y1, x2, y2);
         }
-
-        this._markTouched();
     }
 
     _handleDrag(x, y) {
@@ -177,7 +177,7 @@ export default class ImageOverlay extends Component {
         ).start();
     }
 
-    _markTouched(method) {
+    _markTouched() {
         if (!this.state.overlayTouched) {
             this.setState({ overlayTouched: true });
         }
@@ -187,7 +187,7 @@ export default class ImageOverlay extends Component {
         const {image} = this.props;
         const pan = this._pan;
         const {
-            isDragging, isScaling,
+            isDragging, isScaling, overlayTouched,
             scale, rotation
         } = this.state;
         const {x, y} = this.state.pan;
@@ -206,21 +206,18 @@ export default class ImageOverlay extends Component {
         };
         const dragStyle = isDragging ? styles.dragging : null;
         const scaleStyle = isScaling ? styles.scaling : null;
+        const untouchedStyle = !overlayTouched ? styles.untouchedBorder : null;
 
         return (
             <View style={styles.drag}>
                 <Animated.View
-                    style={[imageStyle, dragStyle, scaleStyle]}
+                    style={[imageStyle, dragStyle, scaleStyle, untouchedStyle]}
                     {...pan.panHandlers}
                 >
                     <Image
                         source={image}
                         style={styles.image}
-                    >
-                        {this.state.overlayTouched
-                            ? null
-                            : <View style={styles.untouchedBorder} />}
-                    </Image>
+                    />
                 </Animated.View>
             </View>
         );

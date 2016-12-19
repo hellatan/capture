@@ -100,16 +100,6 @@ export default class CameraView extends Component {
         };
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        setTimeout(() => {
-            // need to use setTimeout here otherwise the camera capture
-            // will not be available to the screen capture yet
-            if (this.state.tmpScreen !== null && prevState.tmpScreen === null) {
-                this.realCapture();
-            }
-        }, 200);
-    }
-
     props: CameraViewProps;
 
     setCamera(ref) {
@@ -172,6 +162,10 @@ export default class CameraView extends Component {
             outputRange: [1, 0]
         });
 
+        const onLoad = () => {
+            this.realCapture();
+        };
+
         return (
             <View style={styles.container}>
                 <Camera
@@ -181,7 +175,7 @@ export default class CameraView extends Component {
                     ref={ref => this.setCamera(ref)}
                 >
                     <View style={styles.fullScreen} ref={ref => this.setContainer(ref)}>
-                        <Image style={styles.snapshot} source={source}>
+                        <Image style={styles.snapshot} source={source} onLoad={onLoad}>
                             <ImageOverlay image={item.imageSource} />
                         </Image>
                     </View>
