@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-import ItemViewer from '../components/ItemViewer';
 import MainMenu from '../components/MainMenu';
+import PDP from '../components/PDP';
 import { setActiveItem } from '../actions';
 
 class Router extends Component {
@@ -20,7 +20,7 @@ class Router extends Component {
     render() {
         const { activeItem, items } = this.props;
         return activeItem
-             ? <ItemViewer item={activeItem} exit={this.goToMainMenu} backToMenu={() => this.props.setActiveItem(null)} />
+             ? <PDP item={activeItem} backToMenu={this.goToMainMenu} />
              : <MainMenu items={items} viewItem={this.props.setActiveItem} />;
     }
 }
