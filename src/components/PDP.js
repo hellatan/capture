@@ -42,7 +42,7 @@ export default function PDP({item, navigator}) {
             </TouchableHighlight>
             <TabBarIOS>
                 <TabBarIOS.Item
-                    icon={require('../assets/camera_small.png')}
+                    icon={require('../assets/camera_icon_small.png')}
                     onPress={navigateToCamera}
                     title="Camera View"
                 />
