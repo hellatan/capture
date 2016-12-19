@@ -2996,7 +2996,7 @@ react-deep-force-update@^1.0.0:
   version "0.4.0"
   resolved "git+https://github.com/lwansbrough/react-native-camera.git#76963a0a5e98f39e1d12f1a71dbf3cddd388030e"
 
-react-native-view-shot@^1.5.1:
+react-native-view-shot:
   version "1.5.1"
   resolved "http://npm.intranet.1stdibs.com:4783/react-native-view-shot/-/react-native-view-shot-1.5.1.tgz#693b1992ed16a6de3964f0d2e8ac42a3cc07dba2"
 
