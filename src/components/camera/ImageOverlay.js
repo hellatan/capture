@@ -15,6 +15,8 @@ const INITIAL_SIZE = 200;
 // this is hacky because i don't know how to do border-box in react native
 const BORDER_WIDTH = 2;
 
+const DIJON_COLOR = '#a38e44';
+
 const styles = StyleSheet.create({
     drag: {
         flex: 0,
@@ -26,11 +28,17 @@ const styles = StyleSheet.create({
     },
     scaling: {
         borderWidth: BORDER_WIDTH,
-        borderColor: '#0f0'
+        borderColor: DIJON_COLOR
     },
     image: {
         width: INITIAL_SIZE,
         height: INITIAL_SIZE
+    },
+    untouchedBorder: {
+        flex: 1,
+        borderColor: DIJON_COLOR,
+        borderStyle: 'dashed',
+        borderWidth: 1
     }
 });
 
@@ -49,7 +57,8 @@ export default class ImageOverlay extends Component {
             pan: new Animated.ValueXY(),
             scale: new Animated.Value(1),
             rotation: new Animated.Value(0),
-            initialPinch: null
+            initialPinch: null,
+            overlayTouched: false
         };
     }
 
@@ -114,6 +123,8 @@ export default class ImageOverlay extends Component {
             this._handleRotate(x1, y1, x2, y2);
             this._handlePinchZoom(x1, y1, x2, y2);
         }
+
+        this._markTouched();
     }
 
     _handleDrag(x, y) {
@@ -166,6 +177,12 @@ export default class ImageOverlay extends Component {
         ).start();
     }
 
+    _markTouched(method) {
+        if (!this.state.overlayTouched) {
+            this.setState({ overlayTouched: true });
+        }
+    }
+
     render() {
         const {image} = this.props;
         const pan = this._pan;
@@ -199,7 +216,11 @@ export default class ImageOverlay extends Component {
                     <Image
                         source={image}
                         style={styles.image}
-                    />
+                    >
+                        {this.state.overlayTouched
+                            ? null
+                            : <View style={styles.untouchedBorder} />}
+                    </Image>
                 </Animated.View>
             </View>
         );
