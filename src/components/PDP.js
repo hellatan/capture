@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import {
-    Dimensions,
     Image,
     StyleSheet,
     TabBarIOS,
@@ -10,15 +9,13 @@ import {
 
 import ItemViewer from './ItemViewer';
 
-const { height, width } = Dimensions.get('window');
-
 const styles = StyleSheet.create({
     bgImage: {
-        height,
-        width,
+        alignItems: 'stretch',
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'stretch'
+        height: null,
+        width: null
     }
 });
 
