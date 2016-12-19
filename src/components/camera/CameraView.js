@@ -109,12 +109,13 @@ export default class CameraView extends Component {
 
     render() {
         const {width, height} = Dimensions.get('window');
-        const {item, backToMenu} = this.props;
+        const {item, exit } = this.props;
         const source = this.state.tmpScreen ? {
                 uri: this.state.tmpScreen,
                 width: width,
                 height: height
             } : null;
+
         return (
             <View style={styles.container}>
                 <Camera
@@ -131,7 +132,7 @@ export default class CameraView extends Component {
                 </Camera>
                 <View style={styles.bottomSection}>
                     <Text
-                        onPress={() => backToMenu()}
+                        onPress={() => exit()}
                         style={styles.takePicture}
                     >
                         Back

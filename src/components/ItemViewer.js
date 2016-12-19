@@ -13,12 +13,12 @@ const styles = StyleSheet.create({
     }
 });
 
-export default function ItemView({ item, exit, backToMenu }) {
+export default function ItemView({ item, exit }) {
     return (
         <View style={styles.container}>
             <CameraView
                 item={item}
-                backToMenu={backToMenu}
+                exit={exit}
             />
         </View>
     );
