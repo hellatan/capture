@@ -6,8 +6,6 @@ import {
     Text,
     View,
     Dimensions,
-    PanResponder,
-    Animated,
     CameraRoll,
     Image
 } from 'react-native';
@@ -63,7 +61,7 @@ export default class CameraView extends Component {
             tmpScreen: null,
             format: 'jpg',
             quality: .9
-        }
+        };
     }
 
     setCamera(ref) {

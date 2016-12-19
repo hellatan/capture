@@ -3,7 +3,6 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    Text,
     Image,
     View,
     PanResponder,
@@ -41,15 +40,23 @@ const styles = StyleSheet.create({
     }
 });
 
+
+type ImageOverlayProps = {
+    image: Object
+};
+
 export default class ImageOverlay extends Component {
-    constructor(props) {
+    constructor(props: ImageOverlayProps) {
         super(props);
 
         this.state = {
-            dragging: false,
+            isDragging: false,
+            isScaling: false,
             pan: new Animated.ValueXY(),
             scale: new Animated.Value(1),
-            initialPinch: null
+            rotation: new Animated.Value(1),
+            initialPinch: null,
+            initialDegrees: null
         };
     }
 
@@ -59,14 +66,14 @@ export default class ImageOverlay extends Component {
         this._animatedValueY = 0;
         this._scale = 1;
 
-        this.state.pan.x.addListener((value) => this._animatedValueX = value.value);
-        this.state.pan.y.addListener((value) => this._animatedValueY = value.value);
+        this.state.pan.x.addListener(value => { this._animatedValueX = value.value; });
+        this.state.pan.y.addListener(value => { this._animatedValueY = value.value; });
 
         this._pan = PanResponder.create({
             onMoveShouldSetResponderCapture: () => true,
             onMoveShouldSetPanResponderCapture: () => true,
 
-            onPanResponderGrant: (e, gestureState) => {
+            onPanResponderGrant: () => {
                 // reset the offset to the previously stored values
                 this.state.pan.setOffset({x: this._animatedValueX, y: this._animatedValueY});
                 this.state.pan.setValue({x: 0, y: 0});
@@ -77,8 +84,8 @@ export default class ImageOverlay extends Component {
             onPanResponderRelease: () => {
                 this.state.pan.flattenOffset(); // Flatten the offset so it resets the default positioning
                 this.setState({
-                    dragging: false,
-                    scaling: false,
+                    isDragging: false,
+                    isScaling: false,
                     initialPinch: null
                 });
             }
@@ -90,18 +97,29 @@ export default class ImageOverlay extends Component {
         this.state.pan.y.removeAllListeners();
     }
 
+    props: ImageOverlayProps;
+
+    _getTouchAngle(x1, y1, x2, y2) {
+        const radians = Math.atan2((x1 - x2), (y1 - y2));
+        const degrees = radians * (180 / Math.PI);
+        return degrees;
+    }
+
     _handleMove(e, gesture) {
         const touches = e.nativeEvent.touches;
         const {dx, dy} = gesture;
 
         if (touches.length === 1) {
-            this.setState({ dragging: true });
-            return this._handleDrag(dx, dy);
+            this.setState({ isDragging: true });
+            this._handleDrag(dx, dy);
 
         } else if (touches.length === 2) {
             const [touch1, touch2] = touches;
+            const {pageX: x1, pageY: y1} = touch1;
+            const {pageX: x2, pageY: y2} = touch2;
 
-            return this._handlePinchZoom(touch1.pageX, touch1.pageY, touch2.pageX, touch2.pageY);
+            this._handleRotate(x1, y1, x2, y2);
+            this._handlePinchZoom(x1, y1, x2, y2);
         }
     }
 
@@ -110,8 +128,21 @@ export default class ImageOverlay extends Component {
         this.state.pan.y.setValue(y);
     }
 
-    _handleRotate() {
-        // TODO
+    _handleRotate(x1, y1, x2, y2) {
+        const {initialPinch, rotation} = this.state;
+        if (initialPinch) {
+            if (initialPinch.angle === null) {
+                initialPinch.angle = rotation._value;
+            }
+
+            const {x1: x1_, y1: y1_, x2: x2_, y2: y2_} = initialPinch;
+            const initialDegrees = this._getTouchAngle(x1_, y1_, x2_, y2_);
+            const degrees = this._getTouchAngle(x1, y1, x2, y2);
+
+            const startOffset = initialPinch.angle + initialDegrees;
+
+            this.state.rotation.setValue((-degrees + startOffset) % 360);
+        }
     }
 
     _handlePinchZoom(x1, y1, x2, y2) {
@@ -127,8 +158,8 @@ export default class ImageOverlay extends Component {
 
         if (!initialPinch) {
             this.setState({
-                scaling: true,
-                initialPinch: { x1, y1, x2, y2, distance }
+                isScaling: true,
+                initialPinch: { x1, y1, x2, y2, distance, angle: null }
             });
 
             this._scale = this.state.scale._value;
@@ -145,18 +176,26 @@ export default class ImageOverlay extends Component {
     render() {
         const {image} = this.props;
         const pan = this._pan;
-        const scale = this.state.scale;
+        const {
+            isDragging, isScaling,
+            scale, rotation
+        } = this.state;
         const {x, y} = this.state.pan;
+        const spin = rotation.interpolate({
+            inputRange: [0, 360],
+            outputRange: ['0deg', '360deg']
+        });
 
         const imageStyle = {
             transform: [
                 { translateX: x },
                 { translateY: y },
+                { rotate: spin },
                 { scale }
             ]
         };
-        const dragStyle = this.state.dragging ? styles.dragging : null;
-        const scaleStyle = this.state.scaling ? styles.scaling : null;
+        const dragStyle = isDragging ? styles.dragging : null;
+        const scaleStyle = isScaling ? styles.scaling : null;
 
         return (
             <View style={styles.drag}>
