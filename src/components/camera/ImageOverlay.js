@@ -31,6 +31,12 @@ const styles = StyleSheet.create({
     image: {
         width: INITIAL_SIZE,
         height: INITIAL_SIZE
+    },
+    untouchedBorder: {
+        flex: 1,
+        borderColor: '#a38e44',
+        borderStyle: 'dashed',
+        borderWidth: 1
     }
 });
 
@@ -49,7 +55,8 @@ export default class ImageOverlay extends Component {
             pan: new Animated.ValueXY(),
             scale: new Animated.Value(1),
             rotation: new Animated.Value(0),
-            initialPinch: null
+            initialPinch: null,
+            overlayTouched: false
         };
     }
 
@@ -114,6 +121,8 @@ export default class ImageOverlay extends Component {
             this._handleRotate(x1, y1, x2, y2);
             this._handlePinchZoom(x1, y1, x2, y2);
         }
+
+        this._markTouched();
     }
 
     _handleDrag(x, y) {
@@ -166,6 +175,12 @@ export default class ImageOverlay extends Component {
         ).start();
     }
 
+    _markTouched(method) {
+        if (!this.state.overlayTouched) {
+            this.setState({ overlayTouched: true });
+        }
+    }
+
     render() {
         const {image} = this.props;
         const pan = this._pan;
@@ -199,7 +214,11 @@ export default class ImageOverlay extends Component {
                     <Image
                         source={image}
                         style={styles.image}
-                    />
+                    >
+                        {this.state.overlayTouched
+                            ? null
+                            : <View style={styles.untouchedBorder} />}
+                    </Image>
                 </Animated.View>
             </View>
         );
