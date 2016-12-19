@@ -15,6 +15,8 @@ const INITIAL_SIZE = 200;
 // this is hacky because i don't know how to do border-box in react native
 const BORDER_WIDTH = 2;
 
+const DIJON_COLOR = '#a38e44';
+
 const styles = StyleSheet.create({
     drag: {
         flex: 0,
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
     },
     scaling: {
         borderWidth: BORDER_WIDTH,
-        borderColor: '#0f0'
+        borderColor: DIJON_COLOR
     },
     image: {
         width: INITIAL_SIZE,
@@ -34,7 +36,7 @@ const styles = StyleSheet.create({
     },
     untouchedBorder: {
         flex: 1,
-        borderColor: '#a38e44',
+        borderColor: DIJON_COLOR,
         borderStyle: 'dashed',
         borderWidth: 1
     }
