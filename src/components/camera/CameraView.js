@@ -6,7 +6,8 @@ import {
     View,
     Dimensions,
     CameraRoll,
-    Image
+    Image,
+    TouchableHighlight
 } from 'react-native';
 
 import {takeSnapshot} from "react-native-view-shot";
@@ -33,8 +34,10 @@ const styles = StyleSheet.create({
     bottomSection: {
         flexGrow: 0,
         flexDirection: 'row',
+        justifyContent: 'center',
         alignItems: 'center',
-        margin: 10
+        padding: 10,
+        backgroundColor: '#000'
     },
     takePicture: {
         flex: 1,
@@ -47,13 +50,24 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     buttonContainer: {
-        flex: 1,
-        flexBasis: 50,
-        padding: 10,
-        margin: 20,
+        borderRadius: 60,
+        width: 60,
+        height: 60,
+        margin: 10,
         borderWidth: 1,
-        borderColor: '#fff',
-        alignItems: 'center'
+        backgroundColor: '#ddd',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    innerButtonContainer: {
+        borderRadius: 50,
+        width: 50,
+        height: 50,
+        borderWidth: 2,
+        borderColor: '#000',
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     cameraIcon: {
         height: 20,
@@ -147,15 +161,20 @@ export default class CameraView extends Component {
                     </View>
                 </Camera>
                 <View style={styles.bottomSection}>
-                    <View
+                    <TouchableHighlight
                         onPress={() => this.capture()}
+                    >
+                    <View
                         style={styles.buttonContainer}
                     >
-                        <Image
-                            style={styles.cameraIcon}
-                            source={require('../../assets/camera_icon.png')}
-                        />
+                        <View style={styles.innerButtonContainer}>
+                            <Image
+                                style={styles.cameraIcon}
+                                source={require('../../assets/camera_icon.png')}
+                            />
+                        </View>
                     </View>
+                    </TouchableHighlight>
                 </View>
             </View>
         );
