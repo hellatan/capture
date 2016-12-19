@@ -3,6 +3,7 @@ import {
     Dimensions,
     Image,
     StyleSheet,
+    TabBarIOS,
     Text,
     TouchableHighlight
 } from 'react-native';
@@ -39,6 +40,13 @@ export default function PDP({item, navigator}) {
                     Go to camera view
                 </Text>
             </TouchableHighlight>
+            <TabBarIOS>
+                <TabBarIOS.Item
+                    icon={require('../assets/camera_small.png')}
+                    onPress={navigateToCamera}
+                    title="Camera View"
+                />
+            </TabBarIOS>
         </Image>
     );
 }
