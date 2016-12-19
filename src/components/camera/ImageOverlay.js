@@ -54,7 +54,7 @@ export default class ImageOverlay extends Component {
             isScaling: false,
             pan: new Animated.ValueXY(),
             scale: new Animated.Value(1),
-            rotation: new Animated.Value(1),
+            rotation: new Animated.Value(0),
             initialPinch: null,
             initialDegrees: null
         };
