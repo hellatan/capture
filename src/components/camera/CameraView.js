@@ -15,6 +15,11 @@ import Camera from 'react-native-camera';
 import ImageOverlay from './ImageOverlay';
 
 const styles = StyleSheet.create({
+    fullScreen: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'stretch'
+    },
     container: {
         flex: 1,
         justifyContent: 'center',
@@ -29,7 +34,7 @@ const styles = StyleSheet.create({
     snapshot: {
         flex: 1,
         justifyContent: 'center',
-        alignItems: 'stretch'
+        alignItems: 'center'
     },
     bottomSection: {
         flexGrow: 0,
@@ -154,7 +159,7 @@ export default class CameraView extends Component {
                     style={styles.preview}
                     ref={ref => this.setCamera(ref)}
                 >
-                    <View style={styles.snapshot} ref={ref => this.setContainer(ref)}>
+                    <View style={styles.fullScreen} ref={ref => this.setContainer(ref)}>
                         <Image style={styles.snapshot} source={source}>
                             <ImageOverlay image={item.imageSource} />
                         </Image>
