@@ -3,7 +3,6 @@
 import React, { Component } from 'react';
 import {
     StyleSheet,
-    Text,
     View,
     Dimensions,
     CameraRoll,
@@ -35,8 +34,7 @@ const styles = StyleSheet.create({
         flexGrow: 0,
         flexDirection: 'row',
         alignItems: 'center',
-        margin: 10,
-        backgroundColor: '#abc'
+        margin: 10
     },
     takePicture: {
         flex: 1,
@@ -45,13 +43,31 @@ const styles = StyleSheet.create({
         margin: 20,
         borderWidth: 1,
         borderColor: '#fff',
-        textAlign: 'center'
+        textAlign: 'center',
+        alignItems: 'center'
+    },
+    buttonContainer: {
+        flex: 1,
+        flexBasis: 50,
+        padding: 10,
+        margin: 20,
+        borderWidth: 1,
+        borderColor: '#fff',
+        alignItems: 'center'
+    },
+    cameraIcon: {
+        height: 20,
+        width: 20
     }
 });
 
 
+type CameraViewProps = {
+    item: Object
+};
+
 export default class CameraView extends Component {
-    constructor(props) {
+    constructor(props: CameraViewProps) {
         super(props);
 
         this.camera = null;
@@ -64,14 +80,6 @@ export default class CameraView extends Component {
         };
     }
 
-    setCamera(ref) {
-        this.camera = ref;
-    }
-
-    setContainer(ref) {
-        this.container = ref;
-    }
-
     componentDidUpdate(prevProps, prevState) {
         setTimeout(() => {
             // need to use setTimeout here otherwise the camera capture
@@ -82,15 +90,25 @@ export default class CameraView extends Component {
         }, 200);
     }
 
+    props: CameraViewProps;
+
+    setCamera(ref) {
+        this.camera = ref;
+    }
+
+    setContainer(ref) {
+        this.container = ref;
+    }
+
     realCapture() {
-        const {format, quality} = this.state
+        const {format, quality} = this.state;
         takeSnapshot(this.container, {format, quality})
             .then(data => {
                 const file = `file://${data}`;
                 CameraRoll.saveToCameraRoll(file);
                 this.setState({
                     tmpScreen: null
-                })
+                });
             })
             .catch(err => console.log('ERR: ', err));
     }
@@ -107,12 +125,12 @@ export default class CameraView extends Component {
 
     render() {
         const {width, height} = Dimensions.get('window');
-        const {item, exit } = this.props;
+        const {item} = this.props;
         const source = this.state.tmpScreen ? {
-                uri: this.state.tmpScreen,
-                width: width,
-                height: height
-            } : null;
+            uri: this.state.tmpScreen,
+            width: width,
+            height: height
+        } : null;
 
         return (
             <View style={styles.container}>
@@ -129,18 +147,15 @@ export default class CameraView extends Component {
                     </View>
                 </Camera>
                 <View style={styles.bottomSection}>
-                    <Text
-                        onPress={() => exit()}
-                        style={styles.takePicture}
-                    >
-                        Back
-                    </Text>
-                    <Text
+                    <View
                         onPress={() => this.capture()}
-                        style={styles.takePicture}
+                        style={styles.buttonContainer}
                     >
-                        Take a picture!
-                    </Text>
+                        <Image
+                            style={styles.cameraIcon}
+                            source={require('../../assets/camera_icon.png')}
+                        />
+                    </View>
                 </View>
             </View>
         );
