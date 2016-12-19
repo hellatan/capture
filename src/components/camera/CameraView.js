@@ -7,7 +7,8 @@ import {
     Dimensions,
     CameraRoll,
     Image,
-    TouchableHighlight
+    TouchableHighlight,
+    Animated
 } from 'react-native';
 
 import {takeSnapshot} from "react-native-view-shot";
@@ -15,6 +16,14 @@ import Camera from 'react-native-camera';
 import ImageOverlay from './ImageOverlay';
 
 const styles = StyleSheet.create({
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#fff'
+    },
     fullScreen: {
         flex: 1,
         justifyContent: 'center',
@@ -43,16 +52,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 10,
         backgroundColor: '#000'
-    },
-    takePicture: {
-        flex: 1,
-        flexBasis: 50,
-        padding: 10,
-        margin: 20,
-        borderWidth: 1,
-        borderColor: '#fff',
-        textAlign: 'center',
-        alignItems: 'center'
     },
     buttonContainer: {
         borderRadius: 60,
@@ -95,7 +94,9 @@ export default class CameraView extends Component {
         this.state = {
             tmpScreen: null,
             format: 'jpg',
-            quality: .9
+            quality: .9,
+            overlayOpacity: new Animated.Value(0),
+            showOverlay: false
         };
     }
 
@@ -125,17 +126,31 @@ export default class CameraView extends Component {
             .then(data => {
                 const file = `file://${data}`;
                 CameraRoll.saveToCameraRoll(file);
+            })
+            .catch(err => console.log('ERR: ', err))
+            .then(() => {
                 this.setState({
                     tmpScreen: null
                 });
-            })
-            .catch(err => console.log('ERR: ', err));
+            });
     }
 
     capture() {
+        this.setState({ showOverlay: true });
+        this.state.overlayOpacity.setValue(0);
+
+        Animated.timing(
+            this.state.overlayOpacity,
+            {
+                toValue: 1,
+                duration: 150
+            }
+        ).start();
+
         this.camera.capture()
             .then(picData => {
                 this.setState({
+                    showOverlay: false,
                     tmpScreen: picData.path
                 });
             })
@@ -145,11 +160,17 @@ export default class CameraView extends Component {
     render() {
         const {width, height} = Dimensions.get('window');
         const {item} = this.props;
-        const source = this.state.tmpScreen ? {
-            uri: this.state.tmpScreen,
+        const {tmpScreen, overlayOpacity, showOverlay} = this.state;
+        const source = tmpScreen ? {
+            uri: tmpScreen,
             width: width,
             height: height
         } : null;
+
+        const opacity = overlayOpacity.interpolate({
+            inputRange: [0, 1],
+            outputRange: [1, 0]
+        });
 
         return (
             <View style={styles.container}>
@@ -165,6 +186,11 @@ export default class CameraView extends Component {
                         </Image>
                     </View>
                 </Camera>
+                {showOverlay &&
+                 <Animated.View style={[styles.overlay, {opacity}]}>
+                     <Image source={null} />
+                 </Animated.View>
+                }
                 <View style={styles.bottomSection}>
                     <TouchableHighlight
                         onPress={() => this.capture()}

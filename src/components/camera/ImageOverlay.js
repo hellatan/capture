@@ -31,12 +31,6 @@ const styles = StyleSheet.create({
     image: {
         width: INITIAL_SIZE,
         height: INITIAL_SIZE
-    },
-    text: {
-        flex: 1,
-        flexBasis: INITIAL_SIZE - (2 * BORDER_WIDTH),
-        textAlign: 'center',
-        backgroundColor: '#ff0'
     }
 });
 
@@ -55,8 +49,7 @@ export default class ImageOverlay extends Component {
             pan: new Animated.ValueXY(),
             scale: new Animated.Value(1),
             rotation: new Animated.Value(0),
-            initialPinch: null,
-            initialDegrees: null
+            initialPinch: null
         };
     }
 
