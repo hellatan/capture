@@ -2,26 +2,30 @@ import React, { Component } from 'react';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
+import {
+    NavigatorIOS
+} from 'react-native'
+
 import MainMenu from '../components/MainMenu';
-import PDP from '../components/PDP';
 import { setActiveItem } from '../actions';
 
 class Router extends Component {
-    constructor(props) {
-        super(props);
-
-        this.goToMainMenu = this.goToMainMenu.bind(this);
-    }
-
-    goToMainMenu() {
-        this.props.setActiveItem(null);
-    }
-
     render() {
-        const { activeItem, items } = this.props;
-        return activeItem
-             ? <PDP item={activeItem} backToMenu={this.goToMainMenu} />
-             : <MainMenu items={items} viewItem={this.props.setActiveItem} />;
+        const { activeItem, items, setActiveItem } = this.props;
+        return (
+            <NavigatorIOS
+                initialRoute={{
+                    title: "Items",
+                    component: MainMenu,
+                    passProps: {
+                        activeItem,
+                        items,
+                        viewItem: setActiveItem
+                    }
+                }}
+                style={{flex: 1}}
+            />
+        );
     }
 }
 

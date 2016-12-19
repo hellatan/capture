@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 
 import MenuItem from './MenuItem';
+import PDP from './PDP';
 
 const styles = StyleSheet.create({
     container: {
@@ -12,7 +13,22 @@ const styles = StyleSheet.create({
     }
 });
 
-export default function MainMenu({ items, viewItem }) {
+type MainMenuProps = {
+    items: Array<Object>,
+    navigator: Object
+};
+
+export default function MainMenu({ items, navigator }: MainMenuProps) {
+    const navigateToItem = item => {
+        navigator.push({
+            title: item.title || 'Selected',
+            component: PDP,
+            passProps: {
+                item
+            }
+        });
+    };
+
     return (
          <ScrollView contentContainerStyle={styles.container}>
             {items.map(item => {
@@ -22,8 +38,8 @@ export default function MainMenu({ items, viewItem }) {
                     <MenuItem
                         imageSource={imageSource}
                         key={title}
-                        onPress={() => viewItem(item)}
                         title={title}
+                        onPress={() => navigateToItem(item)}
                     />
                 );
             })}
