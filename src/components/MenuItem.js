@@ -8,27 +8,45 @@ import {
 } from 'react-native';
 
 const styles = StyleSheet.create({
-    wrapper: {
-        flex: 2,
-        justifyContent: 'center',
-        alignItems: 'flex-start',
-        backgroundColor: '#F5FCFF'
+    container: {
+        alignItems: 'center',
+        backgroundColor: '#F5FCFF',
+        borderBottomWidth: 1,
+        borderBottomColor: '#000',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        height: 150
     },
     image: {
-        justifyContent: 'center',
         alignItems: 'center',
+        justifyContent: 'center',
         height: 100,
         width: 100
+    },
+    imageContainer: {
+        flex: 1,
+        flexBasis: 50,
+        alignItems: 'center'
+    },
+    labelContainer: {
+        alignItems: 'center',
+        flex: 1,
+        flexBasis: 50,
+        paddingRight: 35
     }
 });
 
 export default function MenuItem({ imageSource, onPress, title }) {
     return (
-        <View style={styles.wrapper}>
-            <TouchableHighlight onPress={onPress}>
-                <Text>{title}</Text>
-            </TouchableHighlight>
-            <Image style={styles.image} source={imageSource} />
-        </View>
+        <TouchableHighlight onPress={onPress}>
+            <View style={styles.container}>
+                <View style={styles.imageContainer}>
+                    <Image style={styles.image} source={imageSource} />
+                </View>
+                <View style={styles.labelContainer}>
+                    <Text>{title}</Text>
+                </View>
+            </View>
+        </TouchableHighlight>
     );
 }
