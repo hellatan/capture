@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
         borderBottomWidth: 1,
-        borderBottomColor: '#000',
+        borderBottomColor: '#dfdfdf',
         flexDirection: 'row',
         justifyContent: 'space-between',
         height: 150
