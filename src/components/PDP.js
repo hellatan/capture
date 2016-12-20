@@ -9,6 +9,13 @@ import {
 
 import ItemViewer from './ItemViewer';
 
+const buttonCopy = {
+    'fashion': 'View on Person',
+    'jewelry': 'View on Person',
+    'art': 'View in Room',
+    'furniture': 'View in Room'
+};
+
 const styles = StyleSheet.create({
     bgImage: {
         alignItems: 'stretch',
@@ -41,7 +48,7 @@ export default function PDP({item, navigator}) {
                 <TabBarIOS.Item
                     icon={require('../assets/camera_icon_small.png')}
                     onPress={navigateToCamera}
-                    title="Camera View"
+                    title={buttonCopy[item.vertical] || 'Camera View'}
                 />
             </TabBarIOS>
         </Image>
