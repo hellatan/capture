@@ -184,7 +184,7 @@ export default class ImageOverlay extends Component {
     }
 
     render() {
-        const {image} = this.props;
+        const {image, removeBorder} = this.props;
         const pan = this._pan;
         const {
             isDragging, isScaling, overlayTouched,
@@ -206,7 +206,7 @@ export default class ImageOverlay extends Component {
         };
         const dragStyle = isDragging ? styles.dragging : null;
         const scaleStyle = isScaling ? styles.scaling : null;
-        const untouchedStyle = !overlayTouched ? styles.untouchedBorder : null;
+        const untouchedStyle = !overlayTouched && !removeBorder ? styles.untouchedBorder : null;
 
         return (
             <View style={styles.drag}>
