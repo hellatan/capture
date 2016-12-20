@@ -96,7 +96,8 @@ export default class CameraView extends Component {
             format: 'jpg',
             quality: .9,
             overlayOpacity: new Animated.Value(0),
-            showOverlay: false
+            showOverlay: false,
+            removeBorder: false
         };
     }
 
@@ -141,7 +142,8 @@ export default class CameraView extends Component {
             .then(picData => {
                 this.setState({
                     showOverlay: false,
-                    tmpScreen: picData.path
+                    tmpScreen: picData.path,
+                    removeBorder: true
                 });
             })
             .catch(err => console.log("ERROR", err));
@@ -176,7 +178,7 @@ export default class CameraView extends Component {
                 >
                     <View style={styles.fullScreen} ref={ref => this.setContainer(ref)}>
                         <Image style={styles.snapshot} source={source} onLoad={onLoad}>
-                            <ImageOverlay image={item.imageSource} />
+                            <ImageOverlay image={item.imageSource} removeBorder={this.state.removeBorder} />
                         </Image>
                     </View>
                 </Camera>
