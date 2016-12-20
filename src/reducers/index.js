@@ -13,6 +13,7 @@ const defaultItems = [
     },
     {
         title: 'Very Fine Santa Maria Aquamarine Diamond Gold Drop Necklace',
+        listImageSource: require('../assets/jewelry_with_back.png'),
         imageSource: require('../assets/jewelry.png'),
         pdpImageSource: require('../assets/mock_jewelry.png')
     },

@@ -32,11 +32,11 @@ export default function MainMenu({ items, navigator }: MainMenuProps) {
     return (
          <ScrollView contentContainerStyle={styles.container}>
             {items.map(item => {
-                const { title, imageSource } = item;
+                const { title, imageSource, listImageSource } = item;
 
                 return (
                     <MenuItem
-                        imageSource={imageSource}
+                        imageSource={listImageSource || imageSource}
                         key={title}
                         title={title}
                         onPress={() => navigateToItem(item)}
